@@ -105,20 +105,24 @@ class SentimentModel:
 
 def highlight_sentiment_words(text):
     sia = SentimentIntensityAnalyzer()
-    import re
-    tokens = re.findall(r"\w+|[\s.,!?;]", text)
+    # Split text into words and non-word tokens (punctuation, spaces)
+    tokens = re.findall(r"\w+|\s+|[^\w\s]", text, re.UNICODE)
     highlighted = []
     for token in tokens:
-        word = token.strip().lower()
-        if not word or not word.isalpha():
-            highlighted.append(escape(token))
+        if token.strip() == '':
+            # Spaces or empty
+            highlighted.append(token)
             continue
-        score = sia.polarity_scores(word)['compound']
-        if score >= 0.5:
-            highlighted.append(f'<span class="positive-word">{escape(token)}</span>')
-        elif score <= -0.5:
-            highlighted.append(f'<span class="negative-word">{escape(token)}</span>')
+        if token.isalpha():
+            score = sia.polarity_scores(token)['compound']
+            if score >= 0.3:
+                highlighted.append(f'<span class="positive-word">{escape(token)}</span>')
+            elif score <= -0.3:
+                highlighted.append(f'<span class="negative-word">{escape(token)}</span>')
+            else:
+                highlighted.append(escape(token))
         else:
+            # Punctuation or other non-word
             highlighted.append(escape(token))
     return Markup(''.join(highlighted))
 
@@ -148,7 +152,8 @@ def get_prediction_history():
 
 class SentimentApp:
     def __init__(self, model_path):
-        self.app = Flask(__name__)
+        template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+        self.app = Flask(__name__, template_folder=template_dir)
         self.app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev_secret_key')
         self.model = SentimentModel(model_path)
         self.setup_routes()
@@ -156,6 +161,8 @@ class SentimentApp:
     def setup_routes(self):
         @self.app.route('/', methods=['GET', 'POST'])
         def index():
+            if request.method == 'GET':
+                session.pop(PREDICTION_HISTORY_KEY, None)
             prediction = None
             confidence = None
             user_text = ''
@@ -180,4 +187,7 @@ class SentimentApp:
 
 model_path = os.path.join(os.path.dirname(__file__), 'sentiment_model.pkl')
 app_instance = SentimentApp(model_path)
-handler = app_instance.app 
+handler = app_instance.app
+
+if __name__ == "__main__":
+    app_instance.app.run(debug=True) 

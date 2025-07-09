@@ -90,6 +90,14 @@ header p.lead {
     background: #3730A3; /* Darker Indigo */
     transform: scale(0.96);
 }
+.sa-btn.btn:focus, .sa-btn.btn:active {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+.sa-btn.btn[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
 
 /* =====================
    Result Card Styles
@@ -164,19 +172,25 @@ header p.lead {
 }
 .positive-word {
     color: var(--color-success);
-    font-weight: bold;
-    background: rgba(34,197,94,0.10);
+    font-weight: 700;
+    background: rgba(34,197,94,0.15);
     border-radius: 0.2em;
-    padding: 0 0.15em;
+    padding: 0 0.18em;
+    box-shadow: 0 1px 2px rgba(34,197,94,0.08);
     transition: background 0.2s, color 0.2s;
 }
 .negative-word {
     color: var(--color-danger);
-    font-weight: bold;
-    background: rgba(244,63,94,0.10);
+    font-weight: 700;
+    background: rgba(244,63,94,0.15);
     border-radius: 0.2em;
-    padding: 0 0.15em;
+    padding: 0 0.18em;
+    box-shadow: 0 1px 2px rgba(244,63,94,0.08);
     transition: background 0.2s, color 0.2s;
+}
+.positive-word::selection, .negative-word::selection {
+    background: #e0fbe6 !important;
+    color: inherit !important;
 }
 
 /* =====================
@@ -246,6 +260,22 @@ header p.lead {
     cursor: pointer;
     transition: background 0.2s, outline 0.2s;
 }
+.sa-history-entry:focus, .sa-history-mobile-card:focus, .sa-result-card:focus {
+    box-shadow: 0 0 0 3px var(--color-primary);
+    outline: none;
+    z-index: 2;
+}
+.sa-history-entry:hover, .sa-history-mobile-card:hover, .sa-result-card:hover {
+    box-shadow: 0 0 0 2px var(--color-secondary);
+    transition: box-shadow 0.2s;
+}
+.text-muted, .form-text, .sa-highlights .fw-semibold {
+    color: #6c757d !important;
+}
+#btnSpinner {
+    margin-left: 0.5em;
+    vertical-align: middle;
+}
 
 /* =====================
    Mobile-Friendly History Cards
@@ -285,6 +315,7 @@ header p.lead {
     border-bottom: 1.5px solid #E0E7EF;
     box-shadow: 0 2px 8px rgba(30,41,59,0.04);
     background: var(--color-surface);
+    margin-bottom: 2.5rem;
 }
 .sa-header .navbar-brand {
     font-size: 1.5rem;
@@ -297,8 +328,8 @@ header p.lead {
 }
 
 /* Ensure main content is not hidden under fixed header */
-main[style*="padding-top"] {
-    padding-top: 4.5rem !important;
+main {
+    padding-top: 6.5rem !important;
 }
 
 /* =====================
@@ -363,10 +394,13 @@ main[style*="padding-top"] {
     .sa-main-card, .sa-history-section {
         margin-bottom: 1rem !important;
     }
+    .sa-header {
+        margin-bottom: 1.5rem;
+    }
 }
 @media (max-width: 600px) {
     .sa-main-card.card, .sa-history-section.card {
-        padding: 1.1rem !important;
+        padding: 1.1rem 0.7rem;
     }
     header h1 {
         font-size: 1.3rem;
@@ -379,15 +413,11 @@ main[style*="padding-top"] {
         padding: 0.7em 1em;
     }
     .sa-confidence {
-        padding: 0.7rem 0.3rem 0.3rem 0.3rem;
-        font-size: 0.98rem;
+        max-width: 140px;
+        padding: 0.7rem 0.2rem 0.2rem 0.2rem;
     }
     .sa-confidence-value {
         font-size: 1.05rem;
-    }
-    #confidenceChart {
-        width: 90px !important;
-        height: 90px !important;
     }
     .sa-wordcloud {
         padding: 0.7rem 0.2rem;
@@ -398,5 +428,8 @@ main[style*="padding-top"] {
     }
     .sa-history-table th, .sa-history-table td {
         font-size: 0.95rem;
+    }
+    main {
+        padding-top: 5.5rem !important;
     }
 } 
