@@ -1,0 +1,9 @@
+flask
+scikit-learn
+nltk
+wordcloud
+markupsafe
+pandas
+numpy
+matplotlib
+seaborn 

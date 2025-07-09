@@ -1,0 +1,402 @@
+/* =====================
+   Color Variables
+   ===================== */
+:root {
+    --color-primary: #6366F1;      /* Indigo */
+    --color-secondary: #14B8A6;    /* Teal */
+    --color-success: #22C55E;      /* Emerald */
+    --color-danger: #F43F5E;       /* Rose */
+    --color-info: #0EA5E9;         /* Sky Blue */
+    --color-bg: #F8FAFC;           /* Light Gray */
+    --color-surface: #FFFFFF;      /* White */
+    --color-text: #1E293B;         /* Charcoal */
+    --color-muted: #64748B;        /* Slate Gray */
+}
+
+/* =====================
+   Base & Layout Styles
+   ===================== */
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background: var(--color-bg);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-text);
+}
+
+.sa-main-card.card {
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px rgba(30,41,59,0.08);
+    background: var(--color-surface);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.sa-main-card.card:focus-within, .sa-main-card.card:hover {
+    box-shadow: 0 8px 32px rgba(30,41,59,0.13);
+    transform: translateY(-2px) scale(1.01);
+}
+
+header h1 {
+    color: var(--color-text);
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+header p.lead {
+    font-size: 1.15rem;
+    color: var(--color-muted);
+}
+
+/* =====================
+   Form Styles
+   ===================== */
+.sa-form .form-label {
+    color: var(--color-text);
+    font-size: 1.1rem;
+}
+.sa-form textarea.form-control {
+    resize: vertical;
+    min-height: 90px;
+    font-size: 1.1rem;
+    border-radius: 0.6rem;
+    border: 1.5px solid #cbd5e1;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+.sa-form textarea.form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.15rem rgba(99,102,241,0.12);
+}
+.sa-btn.btn {
+    font-size: 1.15rem;
+    border-radius: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    background: var(--color-primary);
+    border: none;
+    color: #fff;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    outline: none;
+}
+.sa-btn.btn:hover, .sa-btn.btn:focus {
+    background: var(--color-secondary);
+    box-shadow: 0 4px 16px rgba(20,184,166,0.15);
+    transform: scale(0.98);
+}
+.sa-btn.btn:active {
+    background: #3730A3; /* Darker Indigo */
+    transform: scale(0.96);
+}
+
+/* =====================
+   Result Card Styles
+   ===================== */
+.sa-result-card.card {
+    border-radius: 1rem;
+    border: none;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(30,41,59,0.08);
+    transition: box-shadow 0.2s, background 0.2s, transform 0.2s;
+    outline: none;
+    animation: fadeIn 0.5s;
+}
+.sa-result-positive {
+    background: #ECFDF5; /* Light Emerald */
+    border-left: 6px solid var(--color-success);
+    color: var(--color-success);
+}
+.sa-result-negative {
+    background: #FFF1F3; /* Light Rose */
+    border-left: 6px solid var(--color-danger);
+    color: var(--color-danger);
+}
+.sa-result-neutral {
+    background: #F0F9FF; /* Light Sky Blue */
+    border-left: 6px solid var(--color-info);
+    color: var(--color-info);
+}
+.sa-prediction-label {
+    font-size: 1.18rem;
+    margin-bottom: 0.5rem;
+}
+.sa-prediction-value {
+    font-weight: 600;
+    margin-left: 0.5em;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+/* =====================
+   Confidence Styles
+   ===================== */
+.sa-confidence {
+    background: #F1F5F9;
+    border-radius: 0.75rem;
+    padding: 1rem 0.5rem 0.5rem 0.5rem;
+    box-shadow: 0 1px 6px rgba(30,41,59,0.04);
+    max-width: 220px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.5rem;
+    transition: box-shadow 0.2s;
+}
+.sa-confidence-value {
+    font-size: 1.22rem;
+    color: var(--color-text);
+    letter-spacing: 0.5px;
+    margin-left: 0.3em;
+}
+
+/* =====================
+   Highlights Styles
+   ===================== */
+.sa-highlights .fw-semibold {
+    color: var(--color-muted);
+}
+.sa-highlighted-text {
+    font-size: 1.08rem;
+    background: #F8FAFC;
+    transition: background 0.2s;
+}
+.positive-word {
+    color: var(--color-success);
+    font-weight: bold;
+    background: rgba(34,197,94,0.10);
+    border-radius: 0.2em;
+    padding: 0 0.15em;
+    transition: background 0.2s, color 0.2s;
+}
+.negative-word {
+    color: var(--color-danger);
+    font-weight: bold;
+    background: rgba(244,63,94,0.10);
+    border-radius: 0.2em;
+    padding: 0 0.15em;
+    transition: background 0.2s, color 0.2s;
+}
+
+/* =====================
+   Word Cloud Styles
+   ===================== */
+.sa-wordcloud {
+    background: #F1F5F9;
+    border-radius: 0.75rem;
+    padding: 1rem 0.5rem;
+    margin-top: 1.2rem;
+    box-shadow: 0 1px 6px rgba(30,41,59,0.04);
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.sa-wordcloud-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 8px rgba(30,41,59,0.07);
+}
+
+/* =====================
+   History Table Styles
+   ===================== */
+.sa-history-section.card {
+    border-radius: 1rem;
+    background: var(--color-surface);
+    box-shadow: 0 2px 12px rgba(30,41,59,0.07);
+    margin-bottom: 2rem;
+}
+.sa-history-table th, .sa-history-table td {
+    vertical-align: middle;
+    font-size: 1rem;
+    background: #F1F5F9;
+    border: none;
+}
+.sa-history-sentiment {
+    font-weight: 600;
+    border-radius: 0.3em;
+    padding: 0.1em 0.5em;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+.sa-history-positive {
+    color: var(--color-success);
+    background: #ECFDF5;
+}
+.sa-history-negative {
+    color: var(--color-danger);
+    background: #FFF1F3;
+}
+.sa-history-neutral {
+    color: var(--color-info);
+    background: #F0F9FF;
+}
+.sa-history-entry:focus, .sa-history-entry:hover {
+    background: #E0E7FF !important;
+    outline: 2px solid var(--color-primary);
+    cursor: pointer;
+    transition: background 0.2s, outline 0.2s;
+}
+
+/* =====================
+   Mobile-Friendly History Cards
+   ===================== */
+.sa-history-mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.sa-history-mobile-card {
+    border-radius: 0.7rem;
+    box-shadow: 0 1px 6px rgba(30,41,59,0.06);
+    background: #F1F5F9;
+    border: none;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+.sa-history-mobile-card.sa-history-positive {
+    border-left: 5px solid var(--color-success);
+}
+.sa-history-mobile-card.sa-history-negative {
+    border-left: 5px solid var(--color-danger);
+}
+.sa-history-mobile-card.sa-history-neutral {
+    border-left: 5px solid var(--color-info);
+}
+.sa-history-mobile-card:focus, .sa-history-mobile-card:hover {
+    background: #E0E7FF;
+    outline: 2px solid var(--color-primary);
+}
+
+/* =====================
+   Header Styles
+   ===================== */
+.sa-header {
+    z-index: 1040;
+    min-height: 4.5rem;
+    border-bottom: 1.5px solid #E0E7EF;
+    box-shadow: 0 2px 8px rgba(30,41,59,0.04);
+    background: var(--color-surface);
+}
+.sa-header .navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+    color: var(--color-primary);
+}
+.sa-header .navbar-brand i {
+    vertical-align: middle;
+    color: var(--color-primary) !important;
+}
+
+/* Ensure main content is not hidden under fixed header */
+main[style*="padding-top"] {
+    padding-top: 4.5rem !important;
+}
+
+/* =====================
+   Footer Styles (Enhanced)
+   ===================== */
+.sa-footer {
+    background: var(--color-surface);
+    border-top: 1.5px solid #E0E7EF;
+    box-shadow: 0 -2px 8px rgba(30,41,59,0.04);
+    font-size: 1rem;
+    letter-spacing: 0.2px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.sa-footer a {
+    color: var(--color-primary);
+    transition: color 0.2s;
+}
+.sa-footer a:hover, .sa-footer a:focus {
+    color: var(--color-secondary);
+    text-decoration: underline;
+}
+.sa-footer i {
+    vertical-align: middle;
+    color: var(--color-primary);
+}
+
+/* =====================
+   Animations & Transitions
+   ===================== */
+.animate-fadein {
+    animation: fadeIn 0.5s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+}
+.animate-hover {
+    transition: background 0.2s, outline 0.2s;
+}
+
+/* =====================
+   Dashboard Layout
+   ===================== */
+.sa-dashboard-row {
+    min-height: 90vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+.sa-main-col, .sa-history-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .sa-main-col, .sa-history-col {
+        gap: 1rem;
+    }
+    .sa-main-card, .sa-history-section {
+        margin-bottom: 1rem !important;
+    }
+}
+@media (max-width: 600px) {
+    .sa-main-card.card, .sa-history-section.card {
+        padding: 1.1rem !important;
+    }
+    header h1 {
+        font-size: 1.3rem;
+    }
+    .sa-prediction-label, .sa-prediction-value {
+        font-size: 1rem;
+    }
+    .sa-btn.btn {
+        font-size: 1rem;
+        padding: 0.7em 1em;
+    }
+    .sa-confidence {
+        padding: 0.7rem 0.3rem 0.3rem 0.3rem;
+        font-size: 0.98rem;
+    }
+    .sa-confidence-value {
+        font-size: 1.05rem;
+    }
+    #confidenceChart {
+        width: 90px !important;
+        height: 90px !important;
+    }
+    .sa-wordcloud {
+        padding: 0.7rem 0.2rem;
+        max-width: 100%;
+    }
+    .sa-wordcloud-img {
+        border-radius: 0.3rem;
+    }
+    .sa-history-table th, .sa-history-table td {
+        font-size: 0.95rem;
+    }
+} 

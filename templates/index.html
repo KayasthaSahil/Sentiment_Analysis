@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-light">
+    <!-- Header -->
+    <header class="sa-header navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top" role="banner">
+        <div class="container-fluid" style="max-width: 1200px;">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" href="#" aria-label="Sentiment Analysis Home">
+                <i class="bi bi-emoji-smile text-primary fs-3"></i>
+                Sentiment Analysis
+            </a>
+        </div>
+    </header>
+    <main class="container-fluid min-vh-100 d-flex flex-column align-items-center justify-content-center p-0" style="padding-top: 4.5rem;">
+        <div class="row w-100 justify-content-center align-items-stretch g-4 sa-dashboard-row" style="max-width: 1200px; min-height: 90vh;">
+            <!-- Main Card: Form + Result + Wordcloud -->
+            <section class="col-12 col-lg-7 d-flex flex-column sa-main-col" aria-label="Sentiment Analysis Main">
+                <article class="sa-main-card card shadow-lg p-4 my-4 flex-grow-1" aria-labelledby="app-title">
+                    <header class="mb-4 text-center">
+                        <h1 id="app-title" class="fw-bold display-6 mb-1">Sentiment Analysis</h1>
+                        <p class="lead text-muted mb-0">Analyze the sentiment of your text in real time</p>
+                    </header>
+                    <form method="POST" class="sa-form mb-4" aria-label="Sentiment analysis form">
+                        <div class="mb-3">
+                            <label for="user_text" class="form-label fw-semibold">Enter your text</label>
+                            <textarea id="user_text" name="user_text" rows="4" class="form-control" placeholder="Type something to analyze..." required aria-required="true" aria-describedby="user_text_help">{{ user_text|default('') }}</textarea>
+                            <div id="user_text_help" class="form-text">Paste or type any sentence or paragraph.</div>
+                        </div>
+                        <button type="submit" class="sa-btn btn btn-primary w-100 fw-bold py-2" aria-label="Analyze sentiment">Analyze Sentiment</button>
+                    </form>
+                    {% if prediction is not none %}
+                    <section class="sa-result-card card mb-4 animate-fadein {{ 'sa-result-positive' if 'pos' in prediction|lower else 'sa-result-negative' if 'neg' in prediction|lower else 'sa-result-neutral' }}" tabindex="0" aria-live="polite" aria-atomic="true">
+                        <div class="card-body d-flex flex-column align-items-center">
+                            <h2 class="h5 fw-bold mb-2">Prediction Result</h2>
+                            <div class="sa-prediction-label mb-2 d-flex align-items-center gap-2">
+                                <span class="fw-semibold">Sentiment:</span>
+                                <span class="sa-prediction-value d-flex align-items-center gap-1">
+                                    {% if 'pos' in prediction|lower %}
+                                        <i class="bi bi-emoji-smile text-success fs-5" aria-hidden="true"></i>
+                                    {% elif 'neg' in prediction|lower %}
+                                        <i class="bi bi-emoji-frown text-danger fs-5" aria-hidden="true"></i>
+                                    {% else %}
+                                        <i class="bi bi-emoji-neutral text-primary fs-5" aria-hidden="true"></i>
+                                    {% endif %}
+                                    {{ prediction }}
+                                </span>
+                            </div>
+                            {% if confidence is not none %}
+                            <div class="sa-confidence mb-3 w-100 text-center">
+                                <span class="fw-semibold">Confidence:</span>
+                                <span class="sa-confidence-value">{{ confidence }}%</span>
+                                <div class="d-flex justify-content-center align-items-center mt-2">
+                                    <canvas id="confidenceChart" width="120" height="120" aria-label="Confidence score chart" role="img"></canvas>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if highlighted_text %}
+                            <div class="sa-highlights w-100 mt-2">
+                                <div class="fw-semibold mb-1">Sentiment Highlights:</div>
+                                <div class="border rounded p-2 bg-white sa-highlighted-text" style="min-height:2.5em;">
+                                    {{ highlighted_text|safe }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="sa-wordcloud w-100 mt-3 text-center">
+                                {% if wordcloud_img %}
+                                <img src="data:image/png;base64,{{ wordcloud_img }}" alt="Word Cloud" class="img-fluid rounded shadow-sm sa-wordcloud-img" />
+                                {% elif wordcloud_fallback %}
+                                <div class="text-muted small mt-2">{{ wordcloud_fallback }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </section>
+                    {% endif %}
+                </article>
+            </section>
+            <!-- Side Card: Prediction History -->
+            <aside class="col-12 col-lg-5 d-flex flex-column sa-history-col" aria-label="Prediction History">
+                <section class="sa-history-section card shadow-sm my-4 flex-grow-1 animate-fadein" aria-labelledby="history-title">
+                    <div class="card-body d-flex flex-column h-100">
+                        <h2 id="history-title" class="h6 card-title fw-bold mb-3">Recent Prediction History</h2>
+                        {% if prediction_history and prediction_history|length > 0 %}
+                        <div class="table-responsive flex-grow-1 d-none d-lg-block">
+                            <table class="table table-bordered align-middle mb-0 sa-history-table" aria-label="Prediction history">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Input Text</th>
+                                        <th scope="col">Sentiment</th>
+                                        <th scope="col">Confidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in prediction_history|reverse %}
+                                    <tr class="sa-history-entry animate-hover" tabindex="0">
+                                        <td class="sa-history-input" style="max-width: 180px; word-break: break-word;">{{ entry.input }}</td>
+                                        <td class="fw-semibold sa-history-sentiment d-flex align-items-center gap-1 {{ 'sa-history-positive' if 'pos' in entry.label|lower else 'sa-history-negative' if 'neg' in entry.label|lower else 'sa-history-neutral' }}">
+                                            {% if 'pos' in entry.label|lower %}
+                                                <i class="bi bi-emoji-smile text-success fs-6" aria-hidden="true"></i>
+                                            {% elif 'neg' in entry.label|lower %}
+                                                <i class="bi bi-emoji-frown text-danger fs-6" aria-hidden="true"></i>
+                                            {% else %}
+                                                <i class="bi bi-emoji-neutral text-primary fs-6" aria-hidden="true"></i>
+                                            {% endif %}
+                                            {{ entry.label }}
+                                        </td>
+                                        <td class="sa-history-confidence">{{ entry.confidence }}%</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Mobile-friendly history cards -->
+                        <div class="d-lg-none sa-history-mobile-list">
+                            {% for entry in prediction_history|reverse %}
+                            <div class="sa-history-mobile-card card mb-2 animate-fadein {{ 'sa-history-positive' if 'pos' in entry.label|lower else 'sa-history-negative' if 'neg' in entry.label|lower else 'sa-history-neutral' }}" tabindex="0">
+                                <div class="card-body p-2 d-flex flex-column gap-1">
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        {% if 'pos' in entry.label|lower %}
+                                            <i class="bi bi-emoji-smile text-success fs-5" aria-hidden="true"></i>
+                                        {% elif 'neg' in entry.label|lower %}
+                                            <i class="bi bi-emoji-frown text-danger fs-5" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="bi bi-emoji-neutral text-primary fs-5" aria-hidden="true"></i>
+                                        {% endif %}
+                                        <span class="fw-semibold">{{ entry.label }}</span>
+                                        <span class="ms-auto sa-history-confidence">{{ entry.confidence }}%</span>
+                                    </div>
+                                    <div class="sa-history-input small text-muted" style="word-break: break-word;">{{ entry.input }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-muted small">No predictions yet this session.</div>
+                        {% endif %}
+                    </div>
+                </section>
+            </aside>
+        </div>
+        <!-- Footer -->
+        <footer class="sa-footer mt-auto py-3 bg-white border-top shadow-sm text-center" role="contentinfo">
+            <div class="container-fluid" style="max-width: 1200px;">
+                <div class="row align-items-center justify-content-between g-2">
+                    <div class="col-12 col-md-6 mb-2 mb-md-0 text-md-start">
+                        <span class="fw-semibold">Developed by Sahil Kayastha</span>
+                        <span class="text-muted small ms-2">&copy; 2025 Sentiment Analysis App</span>
+                    </div>
+                    <div class="col-12 col-md-6 text-md-end">
+                        <span class="me-2">Connect:</span>
+                        <a href="#" class="text-decoration-none me-2" target="_blank" rel="noopener" aria-label="Portfolio"><i class="bi bi-person-badge fs-5"></i></a>
+                        <a href="https://github.com/KayasthaSahil" class="text-decoration-none me-2" target="_blank" rel="noopener" aria-label="GitHub"><i class="bi bi-github fs-5"></i></a>
+                        <a href="https://www.linkedin.com/in/sahil-kayastha/" class="text-decoration-none me-2" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="bi bi-linkedin fs-5"></i></a>
+                        <a href="https://leetcode.com/u/KayasthaSahil/" class="text-decoration-none" target="_blank" rel="noopener" aria-label="LeetCode"><i class="bi bi-code-slash fs-5"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% if confidence is not none %}
+    <script>
+        var ctx = document.getElementById('confidenceChart').getContext('2d');
+        var confidenceValue = {{ confidence|default(0) }};
+        var sentiment = '{{ prediction|lower }}';
+        var color = '#007bff';
+        if (sentiment.includes('pos')) { color = '#28a745'; }
+        else if (sentiment.includes('neg')) { color = '#dc3545'; }
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [confidenceValue, 100 - confidenceValue],
+                    backgroundColor: [color, '#e9ecef'],
+                    borderWidth: 2,
+                    borderColor: ['#fff', '#fff']
+                }],
+                labels: ['Confidence', '']
+            },
+            options: {
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
