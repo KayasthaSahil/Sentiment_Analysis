@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "api/index.py", "use": "@vercel/python" }
-  ],
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.9",
+      "excludeFiles": "{*.cache,__pycache__,*.pyc,*.pyo,*.pyd,tests,notebooks,examples}/**"
+    }
+  },
   "routes": [
     { "src": "/static/(.*)", "dest": "/static/$1" },
     { "src": "/(.*)", "dest": "/api/index.py" }
