@@ -1,4 +1,6 @@
 flask
 scikit-learn
 nltk
-numpy 
+numpy
+wordcloud
+markupsafe
